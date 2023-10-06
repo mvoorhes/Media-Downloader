@@ -14,13 +14,6 @@ def Download(link, type, quality=1, opath=OPATH):
     except:
         print("ERROR: Cannot Access Video")
         return False
-
-    # if type == 'mp3':
-    #     # Quality is likely not a concern when downloading mp3, get highest
-    #     video = video.streams.get_highest_resolution()
-    # else:
-    #     video = video.streams.filter(res=quality).first()
-    #     # video = video.streams.get_highest_resolution()
  
     try:
         video.download(output_path=opath, filename=vidname+'.mp4')
