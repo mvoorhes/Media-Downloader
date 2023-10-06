@@ -2,6 +2,10 @@ from enum import Enum
 
 OPATH = ''
 BACKGROUND = 'blue'
+WIDTH = 700
+HEIGHT = 200
+FONT = 'calibre'
+
 options = [
     '144p', 
     '240p',
@@ -14,9 +18,9 @@ options = [
 ]
 
 class link_type(Enum):
-    YOUTUBE = 1
-    SOUNDCLOUD = 2
+    YouTube = 1
+    Soundcloud = 2
 
 class download_type(Enum):
-    MP3 = 1
-    MP4 = 2
+    mp3 = 1
+    mp4 = 2

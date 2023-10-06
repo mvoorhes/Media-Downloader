@@ -5,17 +5,15 @@ import sc
 import ytdl
 import constants as cs
 
-OPATH = ''
-
 class gui:
     def __init__(self):
         self.window = tk.Tk()
         self.name = 'Internet Media Downloader'
-        self.width = 700
-        self.height = 200
+        self.width = cs.WIDTH
+        self.height = cs.HEIGHT
         self.bg_color = cs.BACKGROUND
-        self.download_type = tk.StringVar()
-        self.link_type = tk.StringVar()
+        self.download_type = tk.IntVar()
+        self.link_type = tk.IntVar()
         self.link = tk.StringVar()
         self.resolution = tk.StringVar()
 
@@ -24,19 +22,19 @@ class gui:
             self.window,
             text='Link Here',
             bg=self.bg_color,
-            font=('calibre',20,'bold')
+            font=(cs.FONT,20,'bold')
         )
         self.download_type_label = tk.Label(
             self.window,
             text='Download Type',
             bg=self.bg_color,
-            font=('calibre',15)
+            font=(cs.FONT,15)
         )
         self.link_type_label = tk.Label(
             self.window,
             text='Link Type',
             bg=self.bg_color,
-            font=('calibre',15)
+            font=(cs.FONT,15)
         )
 
         # Buttons
@@ -54,30 +52,30 @@ class gui:
         self.mp3 = tk.Radiobutton(
             self.window,
             bg=self.bg_color,
-            text='mp3',
+            text=cs.download_type.mp3.name,
             variable=self.download_type,
-            value='mp3'
+            value=cs.download_type.mp3.value
         )
         self.mp4 = tk.Radiobutton(
             self.window,
             bg=self.bg_color,
-            text='mp4',
+            text=cs.download_type.mp4.name,
             variable=self.download_type,
-            value='mp4'
+            value=cs.download_type.mp4.value
         )
         self.yt = tk.Radiobutton(
             self.window,
             bg=self.bg_color,
-            text='YouTube',
+            text=cs.link_type.YouTube.name,
             variable=self.link_type,
-            value='YouTube'
+            value=cs.link_type.YouTube.value
         )
         self.sc = tk.Radiobutton(
             self.window,
             bg=self.bg_color,
-            text='Soundcloud',
+            text=cs.link_type.Soundcloud.name,
             variable=self.link_type,
-            value='Soundcloud'
+            value=cs.link_type.Soundcloud.value
         )
 
     def initialize_window(self):
@@ -87,8 +85,8 @@ class gui:
         self.window.maxsize(self.width, self.height)
 
     def set_initial_values(self):
-        self.link_type.set('YouTube')
-        self.download_type.set('mp3')
+        self.link_type.set(cs.link_type.YouTube.value)
+        self.download_type.set(cs.download_type.mp3.value)
         self.resolution.set('720p')
 
     def position(self):
@@ -115,9 +113,9 @@ class gui:
     def download_link(self):
         self.window.directory = filedialog.askdirectory()
         if not self.window.directory:
-            self.window.directory = OPATH
+            self.window.directory = cs.OPATH
 
-        if self.link_type.get() == 'Soundcloud':
+        if self.link_type.get() == cs.link_type.Soundcloud.value:
             print("Downloading Soundcloud Video")
             self.print_message(sc.download(self.link.get(), self.window.directory))
         else:
