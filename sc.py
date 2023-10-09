@@ -9,10 +9,12 @@ def download_playlist(playlist, output_path):
     output_path += "/"
     output_path = os.path.join(output_path, playlist.title)
     os.mkdir(output_path)
+    flag = cs.error_types.SUCCESS
     for track in playlist.tracks:
-        if download_track(track, output_path) is False:
-            return False
-    return True
+        if download_track(track, output_path) == cs.error_types.UNKNOWN:
+            flag = cs.error_types.PLAYLIST_INCOMPLETE   # continue downloading with incomplete playlist
+            continue
+    return flag
 
 def download_track(track, output_path):
     try:
@@ -23,9 +25,9 @@ def download_track(track, output_path):
             track.write_mp3_to(file)
     except:
         print("ERROR: Could not download track")
-        return False
+        return cs.error_types.UNKNOWN
 
-    return True
+    return cs.error_types.SUCCESS
 
 def download(name, output_path=cs.OPATH):
     api = SoundcloudAPI()
@@ -35,7 +37,7 @@ def download(name, output_path=cs.OPATH):
     elif type(link) is Playlist:
         download_playlist(link, output_path)
     else:
-        return False
+        return cs.error_types.INVALID_LINK
 
-    return True
+    return cs.error_types.SUCCESS
 

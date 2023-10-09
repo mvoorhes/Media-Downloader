@@ -1,6 +1,6 @@
 from enum import Enum
 
-OPATH = ''
+OPATH = 'Videos'    # Set this to whatever you want your default path to be
 BACKGROUND = 'blue'
 WIDTH = 700
 HEIGHT = 200
@@ -24,3 +24,12 @@ class link_type(Enum):
 class download_type(Enum):
     mp3 = 1
     mp4 = 2
+
+class error_types(Enum):
+    SUCCESS = 1
+    INVALID_LINK = -3
+    VIDEO_BLOCKED = -1
+    BAD_STREAM = -2
+    PLAYLIST_INCOMPLETE = -4
+    UNKNOWN = -5
+    

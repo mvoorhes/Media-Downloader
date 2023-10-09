@@ -36,6 +36,12 @@ class gui:
             bg=self.bg_color,
             font=(cs.FONT,15)
         )
+        self.resolution_label = tk.Label(
+            self.window,
+            text='Resolution',
+            bg=self.bg_color,
+            font=(cs.FONT,15)
+        )
 
         # Buttons
         self.entry = tk.Entry(
@@ -77,6 +83,11 @@ class gui:
             variable=self.link_type,
             value=cs.link_type.Soundcloud.value
         )
+        self.dropdown = tk.OptionMenu(
+            self.window,
+            self.resolution,
+            *cs.options
+        )
 
     def initialize_window(self):
         self.window.title(self.name)
@@ -99,15 +110,29 @@ class gui:
         self.link_type_label.grid(row=1, column=1)
         self.yt.grid(row=2, column=1)
         self.sc.grid(row=3, column=1)
+        self.resolution_label.grid(row=1, column=2)
+        self.dropdown.grid(row=2, column=2)
 
 
     def print_message(self, download_status):
-        if download_status:
+        if download_status == cs.error_types.SUCCESS:
             print("Download Successful")
             messagebox.showinfo("Download Successful", "Enjoy Your File")
-        else:
+        elif download_status == cs.error_types.VIDEO_BLOCKED:
             print("Download Unsuccessful")
-            messagebox.showerror("ERROR", "Could not download file")
+            messagebox.showerror("ERROR YOUTUBE", "Video/Audio is blocked either due to Age Restriction or Copyright Protection")
+        elif download_status == cs.error_types.BAD_STREAM:
+            print("Download Unsuccessful")
+            messagebox.showerror("ERROR YOUTUBE", "Could not download, but could access; Try again with different resolution")
+        elif download_status == cs.error_types.INVALID_LINK:
+            print("Link Invalid")
+            messagebox.showerror("ERROR", "Invalid link; Submit a better link")
+        elif download_status == cs.error_types.UNKNOWN:
+            print("Download Unsuccessful")
+            messagebox.showerror("ERROR", "Could not download video/audio for unknown reasons")
+        elif download_status == cs.error_types.PLAYLIST_INCOMPLETE:
+            print("Download partially successful")
+            messagebox.showerror("ERROR", "Playlist download is partially complete; skipped some files due to a variety of reasons")
 
 
     def download_link(self):
@@ -120,4 +145,4 @@ class gui:
             self.print_message(sc.download(self.link.get(), self.window.directory))
         else:
             print("Downloading YouTube Video")
-            self.print_message(ytdl.Download(self.link.get(), self.download_type.get(), opath=self.window.directory))
+            self.print_message(ytdl.Download(self.link.get(), self.download_type.get(), quality=self.resolution.get(), opath=self.window.directory))

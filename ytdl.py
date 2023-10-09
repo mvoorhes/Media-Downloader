@@ -1,3 +1,4 @@
+import pytube
 from pytube import YouTube
 from ffmpy import FFmpeg
 import os
@@ -5,22 +6,42 @@ import constants as cs
 
 OPATH = 'Videos'
 
-def Download(link, type, quality=1, opath=OPATH):
-    video = YouTube(link)
-    vidname = video.title
-    print(video.thumbnail_url)
+def Download(link, type, quality='720p', opath=OPATH):
+    try:
+        video = YouTube(link)
+        vidname = video.title
+    except (pytube.exceptions.RegexMatchError, pytube.exceptions.VideoUnavailable):
+        print("ERROR: Invalid Link")
+        return cs.error_types.INVALID_LINK
     
     try:
-        video = video.streams.get_highest_resolution()
-    except:
-        print("ERROR: Cannot Access Video")
-        return False
- 
+        if type == cs.download_type.mp3.value:
+            stream = video.streams.get_highest_resolution()
+        else:
+            stream = video.streams.filter(res=quality).first()
+    except pytube.exceptions.AgeRestrictedError:
+        print("ERROR: Blocked from accessing this video")
+        return cs.error_types.VIDEO_BLOCKED
+
+
+    if stream is None:
+        if quality == '1440p' or quality == '2160p':
+            # Resolution is just too high; get highest
+            print("Resolution is too high; Getting next best res")
+            stream = video.streams.get_highest_resolution()
+        else:
+            # Find next best resolution from options list
+            print("Resolution is unavailable; getting next best resolution")
+            quality = cs.options[cs.options.index(quality) + 1] # Gets next resolution
+            print(quality)
+            stream = video.streams.filter(res=quality).first()
+
+
     try:
-        video.download(output_path=opath, filename=vidname+'.mp4')
+        stream.download(output_path=opath, filename=vidname+'.mp4')
     except:
-        print("ERROR: Failed to download video")
-        return False
+        print("ERROR: Cannot download this video")
+        return cs.error_types.BAD_STREAM
  
     # Since we can't download audio only in mp3 format,
     # we convert to mp3 using ffmpeg.
@@ -36,4 +57,4 @@ def Download(link, type, quality=1, opath=OPATH):
         os.remove(IN_FILE)
 
 
-    return True
+    return cs.error_types.SUCCESS
